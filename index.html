@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - Tholons CRM</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="d-flex justify-content-center align-items-center vh-100">
+  <div class="card p-4" style="width: 100%; max-width: 400px;">
+    <h4 class="mb-2">Welcome Back</h4>
+    <p class="mb-4">Sign in to continue to Tholons CRM</p>
+
+    <input type="text" id="username" class="form-control mb-3" placeholder="Username">
+    <input type="password" id="password" class="form-control mb-3" placeholder="Password">
+    <button class="btn btn-primary w-100 mb-2" onclick="login()">Login</button>
+    <p id="msg" class="text-danger text-center"></p>
+  </div>
+
+  <script>
+    async function login() {
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value.trim();
+  const msg = document.getElementById('msg');
+
+  if (!username || !password) {
+    msg.textContent = 'Enter username and password';
+    return;
+  }
+
+  try {
+    const res = await fetch('http://localhost:9095/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      localStorage.setItem('token', data.token);
+      window.location.href = 'dashboard.html';
+    } else {
+      msg.textContent = data.message || 'Login failed';
+    }
+  } catch (err) {
+    console.error(err);
+    msg.textContent = 'Server error';
+  }
+}
+
+  </script>
+</body>
+</html>
