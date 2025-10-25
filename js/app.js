@@ -3,7 +3,7 @@ async function checkLogin() {
     const token = localStorage.getItem('token');
     if (!token) window.location.href = 'index.html';
     try {
-        const res = await fetch('http://localhost:9095/api/auth/check', {
+        const res = await fetch('https://crmbackend-production-da5f.up.railway.app/api/auth/check', {
             method: 'GET',
             headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -79,8 +79,8 @@ async function authFetch(url, options = {}) {
 async function loadDropdowns() {
     try {
         const [divRes, statusRes] = await Promise.all([
-            authFetch('http://localhost:9095/api/clients/divisions'),
-            authFetch('http://localhost:9095/api/clients/statuses')
+            authFetch('https://crmbackend-production-da5f.up.railway.app/api/clients/divisions'),
+            authFetch('https://crmbackend-production-da5f.up.railway.app/api/clients/statuses')
         ]);
         divisions = await divRes.json();
         statuses = await statusRes.json();
@@ -94,7 +94,7 @@ async function loadDropdowns() {
 // ======== LOAD PARTNERS ========
 async function loadPartners() {
     try {
-        const res = await authFetch('http://localhost:9095/api/partners');
+        const res = await authFetch('https://crmbackend-production-da5f.up.railway.app/api/partners');
         partners = await res.json();
         if (partners.length) {
             partnerSelect.innerHTML = partners.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
@@ -147,7 +147,7 @@ async function fetchClientsByPartner() {
         return;
     }
     try {
-        const res = await authFetch(`http://localhost:9095/api/clients/partner/${selectedPartner}`);
+        const res = await authFetch(`https://crmbackend-production-da5f.up.railway.app/api/clients/partner/${selectedPartner}`);
         const data = await res.json();
         clients = data.content || [];
         clientCurrentPage = 1;
@@ -246,7 +246,7 @@ async function exportClientsPDF(filtered = true, allPartners = false) {
     let content = [];
     if (allPartners) {
         // Fetch all clients for all partners
-        const res = await authFetch('http://localhost:9095/api/clients/all');
+        const res = await authFetch('https://crmbackend-production-da5f.up.railway.app/api/clients/all');
         const allClients = await res.json();
 
         partners.forEach(p => {
@@ -340,7 +340,7 @@ partnersTableBody.addEventListener('click', async e => {
         }).then(async result=>{
             if(result.isConfirmed){
                 try{
-                    await authFetch(`http://localhost:9095/api/partners/${id}`,{method:'DELETE'});
+                    await authFetch(`https://crmbackend-production-da5f.up.railway.app/api/partners/${id}`,{method:'DELETE'});
                     partners = partners.filter(p=>p.id!=id);
                     if(selectedPartner==id) selectedPartner = partners[0]?.id || null;
                     renderPartnerTable();
@@ -360,8 +360,8 @@ partnerForm.addEventListener('submit', async e => {
     if(!name) return;
     try{
         let res;
-        if(id) res=await authFetch(`http://localhost:9095/api/partners/${id}`,{method:'PUT',body:JSON.stringify({name})});
-        else res=await authFetch(`http://localhost:9095/api/partners`,{method:'POST',body:JSON.stringify({name})});
+        if(id) res=await authFetch(`https://crmbackend-production-da5f.up.railway.app/api/partners/${id}`,{method:'PUT',body:JSON.stringify({name})});
+        else res=await authFetch(`https://crmbackend-production-da5f.up.railway.app/api/partners`,{method:'POST',body:JSON.stringify({name})});
         const saved = await res.json();
         partnerFormModal.hide();
         selectedPartner = saved.id;
@@ -409,7 +409,7 @@ tableBody.addEventListener('click', async e => {
         }).then(async result=>{
             if(result.isConfirmed){
                 try{
-                    await authFetch(`http://localhost:9095/api/clients/${id}`,{method:'DELETE'});
+                    await authFetch(`https://crmbackend-production-da5f.up.railway.app/api/clients/${id}`,{method:'DELETE'});
                     clients = clients.filter(c=>c.id!=id);
                     renderClientsTable();
                     Swal.fire('Deleted!','Client deleted','success');
@@ -435,8 +435,8 @@ clientForm.addEventListener('submit', async e=>{
     };
     try{
         let res;
-        if(id) res = await authFetch(`http://localhost:9095/api/clients/${id}`,{method:'PUT',body:JSON.stringify(clientData)});
-        else res = await authFetch(`http://localhost:9095/api/clients/partner/${selectedPartner}`,{method:'POST',body:JSON.stringify(clientData)});
+        if(id) res = await authFetch(`https://crmbackend-production-da5f.up.railway.app/api/clients/${id}`,{method:'PUT',body:JSON.stringify(clientData)});
+        else res = await authFetch(`https://crmbackend-production-da5f.up.railway.app/api/clients/partner/${selectedPartner}`,{method:'POST',body:JSON.stringify(clientData)});
         const saved = await res.json();
         if(id) clients = clients.map(c=>c.id==saved.id?saved:c);
         else clients.unshift(saved);
@@ -464,7 +464,7 @@ async function exportClientsPDF(filtered = true, allPartners = false) {
         const cellStyle = { margin: [2, 2, 2, 2] };
 
         if (allPartners) {
-            const res = await authFetch('http://localhost:9095/api/clients/all');
+            const res = await authFetch('https://crmbackend-production-da5f.up.railway.app/api/clients/all');
             const allClients = await res.json();
         
             const sortedPartners = [...partners].sort((a, b) => a.name.localeCompare(b.name));
